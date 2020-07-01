@@ -24,7 +24,7 @@ class App extends React.Component {
       notedPet: "",
       user: [{}],
       userLatLng: {},
-      currentUserPets: [] //the pets that belong to the current user
+      currentUserPet: null, //the pets that belong to the current user
 
       // user: [{
       //   id: 8,
@@ -73,21 +73,21 @@ class App extends React.Component {
 
   getAllOwners = () => {
     fetch(ownersURL)
-      .then(res => res.json())
-      .then(owners => this.setState({ owners: owners }));
+      .then((res) => res.json())
+      .then((owners) => this.setState({ owners: owners }));
   };
 
   getFreshPets = () => {
     //refresh the currentUserPets array
     fetch(petsURL)
-      .then(res => res.json())
-      .then(pets => this.filterFreshPets(pets));
+      .then((res) => res.json())
+      .then((pets) => this.filterFreshPets(pets));
   };
 
-  filterFreshPets = pets => {
+  filterFreshPets = (pets) => {
     console.log(pets);
     if (pets.length > 1) {
-      let filteredPets = pets.filter(pet => {
+      let filteredPets = pets.filter((pet) => {
         return pet.owner.id == this.state.user.id;
       });
       console.log("LOGGING FILTERED PETS:", filteredPets);
@@ -100,15 +100,15 @@ class App extends React.Component {
         return filteredPet;
       };
       this.setState({
-        currentUserPets: newCurrentPets()
+        currentUserPets: newCurrentPets(),
       });
       console.log("current pets set");
     }
   };
 
-  editPetChange = pets => {
+  editPetChange = (pets) => {
     console.log(this.state.currentUserPets);
-    let filteredPet = this.state.currentUserPets.filter(pet => {
+    let filteredPet = this.state.currentUserPets.filter((pet) => {
       return pet.id != pets.id;
     });
     let newCurrentPets = () => {
@@ -116,7 +116,7 @@ class App extends React.Component {
       return filteredPet;
     };
     this.setState({
-      currentUserPets: newCurrentPets()
+      currentUserPets: newCurrentPets(),
     });
     console.log("current pets set");
   };
@@ -135,12 +135,12 @@ class App extends React.Component {
   // }
 
   // Login Feature, save state as user
-  onLogInUser = username => {
+  onLogInUser = (username) => {
     console.log("WE TRIED");
     // console.log(username)
     // this.getAllOwners()
     let ownersfiltered = this.state.owners.filter(
-      owner => owner.name == username
+      (owner) => owner.name == username
     );
     console.log(ownersfiltered);
     console.log(this.state.owners);
@@ -150,7 +150,7 @@ class App extends React.Component {
         isLoggedIn: true,
         user: ownersfiltered[0],
         currentUserPets: ownersfiltered[0].pets,
-        newSignup: false
+        newSignup: false,
       });
       console.log(ownersfiltered);
       // this.setLocalStorage(ownersfiltered[0])
@@ -159,17 +159,17 @@ class App extends React.Component {
     }
   };
 
-  setUserLatLng = latLng => {
+  setUserLatLng = (latLng) => {
     this.setState({ userLatLng: latLng });
   };
 
   //Sign Up Feature: Adding User to state of owners
-  addUser = owner => {
+  addUser = (owner) => {
     this.setState(
-      prevState => {
+      (prevState) => {
         return {
           owners: [...prevState.owners, owner],
-          newSignup: true
+          newSignup: true,
         };
       },
       () => this.postOwner(owner)
@@ -177,27 +177,27 @@ class App extends React.Component {
   };
 
   //Sign Up Feature: POSTING User to Database
-  postOwner = owner => {
+  postOwner = (owner) => {
     fetch(ownersURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
+        Accept: "application/json",
       },
-      body: JSON.stringify(owner)
+      body: JSON.stringify(owner),
     })
-      .then(res => res.json())
-      .then(data => console.log(data));
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   };
 
   // Delete Pet Feature: instantly deletes pets, trying to set alert message
-  deletePet = pet => {
-    const petsToKeep = this.state.currentUserPets.filter(i => i.id != pet.id);
+  deletePet = (pet) => {
+    const petsToKeep = this.state.currentUserPets.filter((i) => i.id != pet.id);
     console.log("CONSOLE LOGGING DELETE FUNCTION:", petsToKeep);
 
     this.setState(
       {
-        currentUserPets: petsToKeep
+        currentUserPets: petsToKeep,
       },
       () => this.deletePetPost(pet)
     );
@@ -205,47 +205,47 @@ class App extends React.Component {
     console.log(pet);
   };
 
-  deletePetPost = pet => {
+  deletePetPost = (pet) => {
     console.log(pet);
     fetch(`http://localhost:3000/pets/${pet.id}`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(() => console.log("deleted pet"));
   };
 
-  editPet = pet => {
+  editPet = (pet) => {
     console.log(pet);
     fetch(`http://localhost:3000/pets/${pet.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify({
-        pet: { ...pet, owner_id: this.state.user.id }
-      })
+        pet: { ...pet, owner_id: this.state.user.id },
+      }),
     })
-      .then(res => res.json())
-      .then(pet => (console.log("tryin"), this.filterFreshPets(pet)));
+      .then((res) => res.json())
+      .then((pet) => (console.log("tryin"), this.filterFreshPets(pet)));
   };
 
-  handleNoteSubmit = note => {
+  handleNoteSubmit = (note) => {
     fetch(notesURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify({
-        note: note
-      })
+        note: note,
+      }),
     })
-      .then(res => res.json())
-      .then(data => console.log("hello"));
+      .then((res) => res.json())
+      .then((data) => console.log("hello"));
     // console.log(data.pet.notes);
     //   let newPetNotes = () => {
     //     if (this.state.petNotes) {
@@ -268,7 +268,7 @@ class App extends React.Component {
     // });
   };
 
-  randFunc = data => {
+  randFunc = (data) => {
     console.log(data);
     return data;
   };
@@ -280,7 +280,7 @@ class App extends React.Component {
     this.setState({
       currentUserPets: [],
       isLoggedIn: false,
-      user: [{}]
+      user: [{}],
       // pets: [{}]
     });
   };

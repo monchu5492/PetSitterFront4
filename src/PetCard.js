@@ -27,13 +27,26 @@ class PetCard extends React.Component {
     console.log(this.props.pet);
     const { open, closeOnEscape, closeOnDimmerClick } = this.state;
     let pet = this.props.pet;
+    console.log(pet);
     return (
       <Card
-        style={{ marginRight: "28px", maxHeight: "446px", marginTop: "15px" }}
+        style={{
+          marginRight: "28px",
+          maxHeight: "458.2px",
+          marginTop: "15px",
+        }}
       >
         {console.log(pet.name)}
-        <Image src={pet.image} wrapped ui={false} />
-        <Segment className="cardseg" style={{ margin: "unset" }}>
+        <Image
+          src={pet.image}
+          wrapped
+          ui={false}
+          style={{ minHeight: "290px" }}
+        />
+        <Segment
+          className="cardseg"
+          style={{ margin: "unset", paddingBottom: "5px" }}
+        >
           <Card.Content>
             <Card.Header style={{ color: "black" }}>
               {pet.name}
@@ -44,14 +57,12 @@ class PetCard extends React.Component {
               <Button
                 as={Link}
                 to="/notes"
-                style={{ marginTop: "10px" }}
+                // style={{ marginTop: "10px" }}
                 onClick={console.log("ho")}
               >
                 Add a Note
               </Button>
             </div>
-            {/* <Button floated="right">Add Note</Button> */}
-            {/* <EditPetForm editPet={this.props.editPet} /> */}
           </Card.Content>
         </Segment>
         <EditPetForm

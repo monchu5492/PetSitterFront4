@@ -17,6 +17,7 @@ class PetsContainer extends React.Component {
     };
     // let newPets = this.state.currentUserPets.push(pet)
     console.log(newPet);
+    console.log(this.props.user.id);
     fetch(petsURL, {
       method: "POST",
       headers: {
@@ -36,27 +37,29 @@ class PetsContainer extends React.Component {
   // Create Pet Cards:
 
   everyPet = () => {
-    // console.log(this.props.getFreshPets())
+    console.log(this.props.currentUserPets);
     console.log("PETS CONTAINER PROPS:", this.props.user.pets);
     // if (this.props.currentUserPets === 1) {
     // let fresheningUpPets = this.props.freshPetsFunction()
     if (!this.props.currentUserPets) {
       console.log("no current pets");
+
       return <PetForm addPet={this.postPet} user={this.props.user} />;
+    } else {
+      return this.props.currentUserPets.map((pet) => {
+        console.log(pet);
+        return (
+          <PetCard
+            pet={pet}
+            user={this.props.user}
+            editPet={this.props.editPet}
+            deletePet={this.props.deletePet}
+            editPetChange={this.props.editPetChange}
+            // notedPet={this.props.notedPet}
+          />
+        );
+      });
     }
-    return this.props.currentUserPets.map((pet) => {
-      console.log(pet);
-      return (
-        <PetCard
-          pet={pet}
-          user={this.props.user}
-          editPet={this.props.editPet}
-          deletePet={this.props.deletePet}
-          editPetChange={this.props.editPetChange}
-          // notedPet={this.props.notedPet}
-        />
-      );
-    });
     //  }
   };
 

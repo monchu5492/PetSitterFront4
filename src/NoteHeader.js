@@ -11,7 +11,7 @@ const SegmentExamplePlaceholder = (props) => (
     <Button
       primary
       className="NHaddbutton"
-      style={{ marginTop: "10%", width: "25%" }}
+      style={{ marginTop: "3%", width: "25%" }}
     >
       Add Note
     </Button>

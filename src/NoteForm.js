@@ -7,7 +7,7 @@ import {
   Radio,
   Select,
   TextArea,
-  Segment
+  Segment,
 } from "semantic-ui-react";
 
 const options = [
@@ -15,18 +15,18 @@ const options = [
   { key: "f", text: "Feeding", value: "catagory" },
   { key: "b", text: "Bathing", value: "catagory" },
   { key: "e", text: "Exercise", value: "catagory" },
-  { key: "o", text: "Other", value: "catagory" }
+  { key: "o", text: "Other", value: "catagory" },
 ];
 
 class FormExampleFieldControl extends Component {
   state = {};
 
   newCurrentPets = () => {
-    let userPets = this.props.currentUserPets.map(pet => {
+    let userPets = this.props.currentUserPets.map((pet) => {
       return {
         key: pet.id,
         text: pet.name,
-        value: pet.id
+        value: pet.id,
       };
     });
     console.log(userPets);
@@ -54,7 +54,7 @@ class FormExampleFieldControl extends Component {
       description: description,
       catagory: catagory,
       priority: priority,
-      pet_id: pet_id
+      pet_id: pet_id,
     };
     this.props.handleNoteSubmit(newState);
     this.props.addedNote(newState);
@@ -65,9 +65,9 @@ class FormExampleFieldControl extends Component {
     return (
       <Segment
         style={{
-          minHeight: "calc(100vh - 150px)",
-          marginTop: "40px",
-          textAlign: "-webkit-center"
+          minHeight: "calc(100vh - 155px)",
+          marginTop: "20px",
+          textAlign: "-webkit-center",
         }}
         inverted
       >
@@ -151,7 +151,7 @@ class FormExampleFieldControl extends Component {
             control={TextArea}
             placeholder="Tell us more about you..."
             onChange={this.handleDesChange}
-            style={{ marginTop: "20px" }}
+            style={{ marginTop: "15px" }}
           />
           <Button
             // onClick={this.handleOnSubmit}

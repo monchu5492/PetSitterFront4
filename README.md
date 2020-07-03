@@ -1,8 +1,14 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
+This is an application that will help streamline petcare with the ability to keep track of pets the a user owns and health realated notes for those pets that can be tailored for a specific sevarity or type of health care topic.
 
-## Available Scripts
+## Demo
+https://drive.google.com/file/d/1dgXEv68PG8Q-CQ-HR6236heLsuHcQ4AC/view?usp=sharing
 
-In the project directory, you can run:
+## Getting started
+
+you can run `yarn start` but you will need to have the backend up and runing on http://localhost:3001.
+you can find the back end here: https://github.com/monchu5492/Pets_Sitter_Backend2
+once the backend is running yarn start will bring you to the home page.
 
 ### `yarn start`
 

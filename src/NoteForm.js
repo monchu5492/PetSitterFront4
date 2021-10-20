@@ -9,6 +9,9 @@ import {
   TextArea,
   Segment,
 } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import NoteHeader from "./NoteHeader";
+import { withRouter } from "react-router";
 
 const options = [
   { key: "h", text: "Health Care", value: "catagory" },
@@ -21,26 +24,12 @@ const options = [
 class FormExampleFieldControl extends Component {
   state = {};
 
-  newCurrentPets = () => {
-    let userPets = this.props.currentUserPets.map((pet) => {
-      return {
-        key: pet.id,
-        text: pet.name,
-        value: pet.id,
-      };
-    });
-    console.log(userPets);
-    return userPets;
-  };
-
-  // componentDidMount = () => {
-  //   this.newCurrentPets();
-  // };
-
-  handleChange = (e, { value }) =>
+  handleChange = (e, { value }) => {
     this.setState({ ...this.state, value: value, priority: value });
+  };
   handleCatChange = (e, { value }) => {
     this.setState({ ...this.state, catagory: e.target.innerText });
+    e.target.innerText = "hello";
   };
   handleDesChange = (e, { value }) => {
     this.setState({ ...this.state, description: value });
@@ -48,16 +37,18 @@ class FormExampleFieldControl extends Component {
   handlePetChange = (e, { value }) => {
     this.setState({ ...this.state, pet_id: value });
   };
-  handleOnSubmit = () => {
-    let { description, catagory, priority, pet_id } = this.state;
+  handleOnSubmit = (e) => {
+    e.preventDefault();
+    let { description, catagory, priority } = this.state;
     let newState = {
       description: description,
       catagory: catagory,
       priority: priority,
-      pet_id: pet_id,
+      pet_id: this.props.currentPet.id,
     };
+    console.log(newState);
     this.props.handleNoteSubmit(newState);
-    this.props.addedNote(newState);
+    this.props.history.push("/notes");
   };
 
   render() {
@@ -65,12 +56,12 @@ class FormExampleFieldControl extends Component {
     return (
       <Segment
         style={{
-          minHeight: "calc(100vh - 155px)",
-          marginTop: "20px",
+          height: "100vh",
           textAlign: "-webkit-center",
         }}
         inverted
       >
+        <NoteHeader />
         <Form
           onSubmit={this.handleOnSubmit}
           inverted
@@ -87,19 +78,13 @@ class FormExampleFieldControl extends Component {
             placeholder="Catagory"
             onChange={this.handleCatChange}
             style={{ marginTop: "20px" }}
+            id="Catagory"
           />
           <label>
             <h3>
               <b>Select your pet</b>
             </h3>
           </label>
-          <Form.Field
-            control={Select}
-            options={this.newCurrentPets()}
-            placeholder="Your pets"
-            onChange={this.handlePetChange}
-            style={{ marginTop: "20px" }}
-          />
           <Form.Group inline>
             <label style={{ marginTop: "20px", marginBottom: "20px" }}>
               <h3>
@@ -156,16 +141,16 @@ class FormExampleFieldControl extends Component {
           <Button
             // onClick={this.handleOnSubmit}
             type="submit"
-            floated="left"
             color="green"
             style={{ marginTop: "20px", width: "30%" }}
           >
             Submit
           </Button>
           <Button
-            floated="right"
-            primary
-            style={{ marginTop: "20px", width: "30%" }}
+            color="facebook"
+            style={{ marginTop: "1.5em", marginLeft: ".5em", width: "30%" }}
+            as={Link}
+            to="/notes"
           >
             Notes
           </Button>
@@ -175,4 +160,4 @@ class FormExampleFieldControl extends Component {
   }
 }
 
-export default FormExampleFieldControl;
+export default withRouter(FormExampleFieldControl);

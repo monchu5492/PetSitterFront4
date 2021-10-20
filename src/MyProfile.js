@@ -34,12 +34,16 @@ const ProfilePicture = (props) => (
 
     <PetsContainer
       currentUserPets={props.currentUserPets}
+      currentPetNotes={props.currentPetNotes}
       updatePets={props.updatePets}
       user={props.user}
       freshPetsFunction={props.freshPetsFunction}
       editPet={props.editPet}
       deletePet={props.deletePet}
       editPetChange={props.editPetChange}
+      setChosePetNoteId={props.setChosePetNoteId}
+      setCurrentPet={props.setCurrentPet}
+      petNotes={props.petNotes}
       // notedPet={props.notedPet}
     />
   </Segment>

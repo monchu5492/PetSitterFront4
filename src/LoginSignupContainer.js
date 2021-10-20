@@ -18,10 +18,10 @@ import SignupForm from './SignupForm'
 export default class LoginSignupContainer extends React.Component {
   render() {
       return(
-        <>
+        <div>
         <LoginForm onLogInUser={this.props.onLogInUser} userState={this.props.userState} isLoggedIn={this.props.isLoggedIn}/>
   
-        </>
+        </div>
       )
     }
   }

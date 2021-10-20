@@ -27,9 +27,8 @@ class PetsContainer extends React.Component {
       body: JSON.stringify({ ...newPet, owner_id: this.props.user.id }),
     })
       .then((res) => res.json())
-      .then((pet) => this.props.freshPetsFunction(pet));
+      .then((dataPet) => this.props.freshPetsFunction(dataPet));
 
-    // this.props.freshPetsFunction
     //  this.setState({currentUserPets: this.state.currentUserPets[0]})
   };
 
@@ -44,28 +43,38 @@ class PetsContainer extends React.Component {
     if (!this.props.currentUserPets) {
       console.log("no current pets");
 
-      return <PetForm addPet={this.postPet} user={this.props.user} />;
+      return (
+        <PetForm
+          addPet={this.postPet}
+          user={this.props.user}
+          key={this.postPet.name}
+        />
+      );
     } else {
       return this.props.currentUserPets.map((pet) => {
         console.log(pet);
         return (
           <PetCard
+            key={pet.id}
             pet={pet}
             user={this.props.user}
             editPet={this.props.editPet}
             deletePet={this.props.deletePet}
             editPetChange={this.props.editPetChange}
-            // notedPet={this.props.notedPet}
+            setChosePetNoteId={this.props.setChosePetNoteId}
+            notedPet={this.props.notedPet}
+            setCurrentPet={this.props.setCurrentPet}
+            currentPetNotes={this.props.currentPetNotes}
+            petNotes={this.props.petNotes}
           />
         );
       });
     }
-    //  }
   };
 
   render() {
     return (
-      <>
+      <div>
         <PetForm
           addPet={this.postPet}
           user={this.props.user}
@@ -74,7 +83,7 @@ class PetsContainer extends React.Component {
         <div className="ui grid container" style={{ marginTop: "28px" }}>
           {this.everyPet()}
         </div>
-      </>
+      </div>
     );
   }
 }

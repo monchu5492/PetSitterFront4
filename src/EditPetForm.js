@@ -45,12 +45,13 @@ class EditPetForm extends React.Component {
     //testing modal:
     const { open, closeOnEscape, closeOnDimmerClick } = this.state;
     return (
-      <div>
+      <div style={{ textAlign: "center" }}>
         <Button
           onClick={this.closeConfigShow(false, true)}
           id="edit"
-          color="twitter"
+          color="#2185d0"
           inverted
+          // style={{ maxWidth: "13.2em" }}
         >
           Edit
         </Button>

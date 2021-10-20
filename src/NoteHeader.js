@@ -3,18 +3,11 @@ import { Button, Header, Icon, Segment } from "semantic-ui-react";
 
 const SegmentExamplePlaceholder = (props) => (
   // <Segment raised inverted>
-  <Header textAlign="center">
+  <Header textAlign="center" style={{marginTop: "1.5em", marginBottom: "3em"}}> 
     {/* <Icon name='pdf file outline' /> */}
     please fill out the informatin for your pet, and submit, to see your pets
     notes.
     <br></br>
-    <Button
-      primary
-      className="NHaddbutton"
-      style={{ marginTop: "3%", width: "25%" }}
-    >
-      Add Note
-    </Button>
   </Header>
   // </Segment>
 );

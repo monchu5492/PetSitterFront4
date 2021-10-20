@@ -24,7 +24,7 @@ class LoginForm extends React.Component {
       this.props.isLoggedIn ? ( <Redirect to="/profile"/> ) : (
       //Want to redirect user to MyProfile after Login
       // this.props.isLoggedIn ? ( <Redirect to="/profile"/> ) : (
-      <>
+      <div>
       <h3 className="form-title">Please Login to view your account</h3>
       <form className="ui form" onSubmit={this.handleOnSubmit}>
       <div className="field">
@@ -33,7 +33,7 @@ class LoginForm extends React.Component {
       </div>
       <button type="submit" className="ui button">Submit</button>
     </form>
-    </>
+    </div>
       )
     )
     // )

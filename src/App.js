@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import HomepageLayout from "./HomepageLayout";
 import NavBar from "./NavBar";
@@ -6,7 +6,10 @@ import LoginSignupContainer from "./LoginSignupContainer";
 import MyProfile from "./MyProfile";
 import SignupForm from "./SignupForm";
 import AboutComp from "./AboutComp";
-import PetsContainer from "./PetsContainer";
+import NoteCard from "./NoteCard";
+import NoteForm from "./NoteForm";
+import EditNoteForm from "./EditNoteForm";
+import NewNoteForm from "./NewNoteForm";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import NoteContainer from "./NoteContainer";
 
@@ -24,8 +27,10 @@ class App extends React.Component {
       notedPet: "",
       user: [{}],
       userLatLng: {},
-      currentUserPet: null, //the pets that belong to the current user
-
+      currentPet: null, //the pets that belong to the current user
+      currentUserPets: [],
+      petNotes: [],
+      ChosenPetNoteId: "",
       // user: [{
       //   id: 8,
       //   name: "Mario",
@@ -45,10 +50,8 @@ class App extends React.Component {
   //   let user = JSON.parse(localStorage.getItem('user'))
   //   return user
   // }
-
   componentDidMount() {
     this.getAllOwners();
-
     if (this.state.user) {
       // this.getFreshPets()
       console.log("user is in state");
@@ -74,49 +77,40 @@ class App extends React.Component {
   getAllOwners = () => {
     fetch(ownersURL)
       .then((res) => res.json())
-      .then((owners) => this.setState({ owners: owners }));
+      .then(
+        (owners) => (this.setOwner(owners), this.setState({ owners: owners }))
+      );
   };
 
-  getFreshPets = () => {
-    //refresh the currentUserPets array
-    fetch(petsURL)
-      .then((res) => res.json())
-      .then((pets) => this.filterFreshPets(pets));
+  setOwner = (owners) => {
+    console.log(owners);
+    let newUser;
+    this.state.user.name
+      ? ((newUser = owners.filter((user) => {
+          user.id !== this.state.user.id;
+        })),
+        this.setState({ user: newUser }))
+      : null;
   };
 
-  filterFreshPets = (pets) => {
-    console.log(pets);
-    if (pets.length > 1) {
-      let filteredPets = pets.filter((pet) => {
-        return pet.owner.id == this.state.user.id;
-      });
-      console.log("LOGGING FILTERED PETS:", filteredPets);
-      this.setState({ currentUserPets: filteredPets });
-    } else if (pets.length <= 1) {
-      console.log(this.state.currentUserPets);
-      let filteredPet = [];
-      let newCurrentPets = () => {
-        filteredPet.push(pets);
-        return filteredPet;
-      };
-      this.setState({
-        currentUserPets: newCurrentPets(),
-      });
-      console.log("current pets set");
-    }
+  getFreshPets = (pets) => {
+    let newPetAry = this.state.currentUserPets;
+    newPetAry.push(pets);
+    this.setState({ currentUserPets: newPetAry });
   };
 
-  editPetChange = (pets) => {
-    console.log(this.state.currentUserPets);
-    let filteredPet = this.state.currentUserPets.filter((pet) => {
+  editPet = (pets) => {
+    let userPets = this.state.currentUserPets;
+    let newPet;
+    let filteredPet = userPets.filter((pet) => {
+      if (pet.id === pets.id) {
+        newPet = userPets.indexOf(pet);
+      }
       return pet.id != pets.id;
     });
-    let newCurrentPets = () => {
-      filteredPet.push(pets);
-      return filteredPet;
-    };
+    filteredPet.splice(newPet, 0, pets);
     this.setState({
-      currentUserPets: newCurrentPets(),
+      currentUserPets: filteredPet,
     });
     console.log("current pets set");
   };
@@ -126,19 +120,10 @@ class App extends React.Component {
   // query the database for the pet (getfreshpets) that match the user id (from props.user), send those to PetContainer
   // in petContainer -> filter over freshpets and create a PetCard for each
 
-  // updatePets = (pet) => {
-  //   console.log("working")
-  //   let newPetsArray = this.state.pets.push(pet)
-  //   this.setState({
-  //     pets: newPetsArray
-  //   })
-  // }
-
   // Login Feature, save state as user
   onLogInUser = (username) => {
     console.log("WE TRIED");
-    // console.log(username)
-    // this.getAllOwners()
+    let newNotes;
     let ownersfiltered = this.state.owners.filter(
       (owner) => owner.name == username
     );
@@ -146,16 +131,22 @@ class App extends React.Component {
     console.log(this.state.owners);
     if (ownersfiltered.length === 1) {
       console.log("OWNER FOUND", ownersfiltered[0]);
+      ownersfiltered[0].pets
+        ? (newNotes = ownersfiltered[0].pets.map((pet) => {
+            return pet.notes.map((note) => {
+              return note;
+            });
+          }))
+        : (newNotes = []);
       this.setState({
         isLoggedIn: true,
         user: ownersfiltered[0],
         currentUserPets: ownersfiltered[0].pets,
         newSignup: false,
+        petNotes: newNotes,
       });
       console.log(ownersfiltered);
-      // this.setLocalStorage(ownersfiltered[0])
-      this.getFreshPets();
-    } else {
+      // this.getFreshPets(ownersfiltered[0].pets);
     }
   };
 
@@ -192,17 +183,14 @@ class App extends React.Component {
 
   // Delete Pet Feature: instantly deletes pets, trying to set alert message
   deletePet = (pet) => {
+    console.log(pet);
     const petsToKeep = this.state.currentUserPets.filter((i) => i.id != pet.id);
-    console.log("CONSOLE LOGGING DELETE FUNCTION:", petsToKeep);
-
     this.setState(
       {
         currentUserPets: petsToKeep,
       },
       () => this.deletePetPost(pet)
     );
-
-    console.log(pet);
   };
 
   deletePetPost = (pet) => {
@@ -217,7 +205,7 @@ class App extends React.Component {
       .then(() => console.log("deleted pet"));
   };
 
-  editPet = (pet) => {
+  editPetChange = (pet) => {
     console.log(pet);
     fetch(`http://localhost:3000/pets/${pet.id}`, {
       method: "PATCH",
@@ -230,7 +218,7 @@ class App extends React.Component {
       }),
     })
       .then((res) => res.json())
-      .then((pet) => (console.log("tryin"), this.filterFreshPets(pet)));
+      .then((data) => (this.editPet(data), this.setCurrentPet(data)));
   };
 
   handleNoteSubmit = (note) => {
@@ -245,64 +233,148 @@ class App extends React.Component {
       }),
     })
       .then((res) => res.json())
-      .then((data) => console.log("hello"));
-    // console.log(data.pet.notes);
-    //   let newPetNotes = () => {
-    //     if (this.state.petNotes) {
-    //       let petNotes = data.pet.notes;
-    //       petNotes.push(data);
-    //       return petNotes;
-    //     } else {
-    //       let petNotes = data.pet.notes;
-    //       petNotes.push(data);
-    //       return petNotes;
-    //     }
-    //   };
-    //   return (
-    //     this.setState({
-    //       ...this.state,
-    //       petNotes: newPetNotes()
-    //     }),
-    //     this.randFunc(data)
-    //   );
-    // });
+      .then((data) => this.setPetNotes(data));
+  };
+
+  handleEditNoteSubmit = (editNote) => {
+    fetch(`http://localhost:3000/notes/${editNote.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        note: editNote,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => this.editSetPets(data));
+  };
+
+  setPetNotes = (note) => {
+    let userPets = this.state.currentUserPets;
+    let currentPet = this.state.currentPet;
+    let i = 0;
+    userPets.forEach((pet) => {
+      if (pet.id === currentPet.id) {
+        let notes = userPets[i].notes;
+        notes = [...notes, note];
+        userPets[i].notes = notes;
+        console.log(userPets[i]);
+        this.setState({
+          currentPetNotes: userPets,
+        });
+      }
+      i++;
+    });
+  };
+
+  editSetPets = (note) => {
+    let currentPet = this.state.currentPet;
+    let currentPetNotes = this.state.currentPet.notes;
+    let newNoteInd;
+    let newNotes;
+
+    newNotes = currentPetNotes.filter((petNote) => {
+      petNote.id === note.id
+        ? (newNoteInd = currentPetNotes.indexOf(petNote))
+        : null;
+      return petNote.id !== note.id;
+    });
+    console.log(newNotes);
+    newNotes.splice(newNoteInd, 0, note);
+    currentPet.notes = newNotes;
+    this.setState({
+      currentPet: currentPet,
+    });
+  };
+
+  setOwnerPetNotes = (ownerPetNotes) => {
+    if (localStorage.getItem("ownerPetNotes")) {
+      localStorage.removeItem("ownerPetNotes");
+      localStorage.setItem("ownerPetNotes", ownerPetNotes);
+      this.setState({ petNotes: ownerPetNotes });
+    } else {
+      localStorage.setItem("ownerPetNotes", ownerPetNotes);
+      this.setState({ petNotes: ownerPetNotes });
+    }
+  };
+
+  setCurrentPet = (currentPet) => {
+    this.setState({
+      currentPet: currentPet,
+      currentPetNotes: currentPet.notes,
+    });
+  };
+
+  setChosePetNoteId = (petId) => {
+    if (this.state.user.name) {
+      this.setState({
+        ChosenPetNoteId: petId,
+      });
+    }
+  };
+
+  handleDeleteNoteOnClick = (ev) => {
+    ev.preventDefault();
+    this.deletNoteFromState(ev);
+    fetch(`${notesURL}/${ev.target.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json)
+      .then((deletedNote) => console.log(deletedNote))
+      .catch((error) => {
+        console.error("Error", error);
+      });
+    console.log("Note was deleted");
+  };
+
+  deletNoteFromState = (ev) => {
+    let userPets = this.state.currentUserPets;
+    let currentPet = this.state.currentPet;
+
+    let i = 0;
+    userPets.forEach((pet) => {
+      if (pet.id === currentPet.id) {
+        let notes = userPets[i].notes.filter((note) => {
+          console.log(note);
+          return note.id !== parseInt(ev.target.id);
+        });
+        userPets[i].notes = notes;
+        this.setState({
+          currentPetNotes: userPets,
+        });
+      }
+
+      i++;
+    });
+  };
+
+  editNoteOnClick = (editNote) => {
+    this.setState({
+      currentNote: editNote,
+    });
   };
 
   randFunc = (data) => {
     console.log(data);
     return data;
   };
-  // notedPet = pet => {
-  //   this.setState({ ...this.state, notedPet: pet });
-  // };
 
   logout = () => {
     this.setState({
       currentUserPets: [],
       isLoggedIn: false,
       user: [{}],
-      // pets: [{}]
     });
   };
-  // method: "DELETE",
-  // headers: {
-  //   "Content-Type": "application/json",
-  //   "Accept": "application/json"
-  // },
-  // body: JSON.stringify({
-  //   currentUserPets: {...currentUserPets, id: this.props.pet.id}
-  // // })
-  // this.state.currentUserPets[0]
-  // renderOwnersProfile = (firstName) => {
-  //   console.log(firstName)
-  //   fetch(ownersURL)
-  //   .then(res => res.json())
-  //   .then(owners => console.log(owners))
-  // }
 
-  // handleOnLogIn = () => {
-  //   console.log("ello mate")
-  // }
+  petNotes = (newPetNotes) => {
+    this.setState({ petNotes: [...this.state.petNotes, newPetNotes] });
+  };
 
   //SUGGESTIONS
   // Global User object or Id
@@ -314,10 +386,8 @@ class App extends React.Component {
   };
 
   render() {
-    // debugger;
     return (
       <div>
-        {/* {console.log(this.localUser().pets)} */}
         <Router>
           <NavBar
             logout={this.logout}
@@ -356,6 +426,7 @@ class App extends React.Component {
               render={() => (
                 <MyProfile
                   currentUserPets={this.state.currentUserPets}
+                  currentPetNotes={this.state.currentPetNotes}
                   updatePets={this.updatePets}
                   user={this.state.user}
                   postPet={this.postPet}
@@ -365,18 +436,49 @@ class App extends React.Component {
                   newSignup={this.state.newSignup}
                   notedPet={this.notedPet}
                   editPetChange={this.editPetChange}
+                  setChosePetNoteId={this.setChosePetNoteId}
+                  setCurrentPet={this.setCurrentPet}
+                  petNotes={this.petNotes}
                 />
               )}
             />
           ) : null}
           <Route
+            path="/noteForm"
+            exact
+            render={() => (
+              <NewNoteForm
+                handleNoteSubmit={this.handleNoteSubmit}
+                currentUserPets={this.state.currentUserPets}
+                currentPet={this.state.currentPet}
+              />
+            )}
+          />
+          <Route
             path="/notes"
             exact
             render={() => (
-              <NoteContainer
-                handleNoteSubmit={this.handleNoteSubmit}
+              <NoteCard
+                // petNotes={this.state.petNotes}
                 currentUserPets={this.state.currentUserPets}
-                petNotes={this.state.petNotes}
+                ChosenPetNoteId={this.state.ChosenPetNoteId}
+                deleteNoteFromAppState={this.deleteNoteFromAppState}
+                handleDeleteNoteOnClick={this.handleDeleteNoteOnClick}
+                user={this.state.user}
+                currentPet={this.state.currentPet}
+                currentPetNotes={this.state.currentPetNotes}
+                editNoteOnClick={this.editNoteOnClick}
+              />
+            )}
+          />
+          <Route
+            path="/editnoteform"
+            exact
+            render={() => (
+              <EditNoteForm
+                currentNote={this.state.currentNote}
+                currentPet={this.state.currentPet}
+                handleEditNoteSubmit={this.handleEditNoteSubmit}
               />
             )}
           />

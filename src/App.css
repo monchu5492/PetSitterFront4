@@ -69,6 +69,10 @@ button#edit.ui.button {
   width: calc(100% + 2px);
 }
 
+.ui.selection.dropdown::placeholder {
+  color: black;
+}
+
 /* div#cContent {
   max-width: 146px;
   color: black;

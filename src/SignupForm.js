@@ -1,5 +1,5 @@
 import React from "react";
-import SearchComp from "./SearchComp";
+import SearchComp3 from "./SearchComp3";
 import { Button, Form } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
 
@@ -27,7 +27,7 @@ class SignupForm extends React.Component {
     return this.props.newSignUpState ? (
       <Redirect to="/login" />
     ) : (
-      <>
+      <div>
         <h3 className="form-title">Please sign up to create an account</h3>
         <form className="ui form" onSubmit={this.handleFormSubmit}>
           <div className="field">
@@ -42,7 +42,7 @@ class SignupForm extends React.Component {
           </div>
           <div className="field">
             <label>Address</label>
-            <SearchComp setUserLatLng={this.props.setUserLatLng} />
+            <SearchComp3 setUserLatLng={this.props.setUserLatLng} />
             {/* <input type="text" name="address" value={this.state.address} onChange={this.handleChange} placeholder="Address" /> */}
           </div>
           <div className="field">
@@ -69,7 +69,7 @@ class SignupForm extends React.Component {
             Submit
           </button>
         </form>
-      </>
+      </div>
     );
   }
 }

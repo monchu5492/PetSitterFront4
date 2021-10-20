@@ -7,7 +7,7 @@ import { Button, Header, Icon, Segment } from "semantic-ui-react";
 class PetsContainer extends React.Component {
   state = { addednote: false, notes: [] };
 
-  addednote = newState => {
+  addednote = (newState) => {
     let newNotes = this.state.notes;
     newNotes.push(newState);
     this.setState({ addednote: !this.state.addednote, notes: newNotes });
@@ -15,13 +15,13 @@ class PetsContainer extends React.Component {
 
   render() {
     return (
-      <Segment inverted>
+      <Segment inverted className="note-container">
         <NoteHeader />
         {this.state.addednote === false ? (
           <NoteForm
             currentUserPets={this.props.currentUserPets}
             handleNoteSubmit={this.props.handleNoteSubmit}
-            addedNote={this.addednote}
+            // addedNote={this.addednote}
           />
         ) : (
           <NoteCard
